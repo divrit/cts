@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+    if(localStorage){
+console.log("local storage");
+localStorage.setItem("use1","user1_name");
+localStorage.setItem("2","tu he hai r1_name");
+
+alert(localStorage.getItem("2"));
+    }else{
+
+
+        console.log("No localStorage");
+    }
+    if(sessionStorage){
+console.log("seesion storage");
+sessionStorage.setItem("use1","user1_name");
+sessionStorage.setItem("2","Sessssioonnn   hai r1_name");
+
+alert(sessionStorage.getItem("2"));
+    }else{
+
+
+        console.log("No localStorage");
+    }
+    
+    
+    </script>
+
+<body>
+<form>
+
+
+<input type="number" min="5" max="25"required>
+<input type="url">
+
+</form>    
+</body>
+
+
+</head>
+</html>

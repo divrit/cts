@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+    function showLocation(){
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(function(position){
+                    console.log(position.coords.latitude);
+                    console.log(position.coords.longitude);
+                });
+            }
+    }
+</script>
+
+<body>
+
+<video src="#" width="250px" height="250px"></video>
+    <button type="button" onclick="showLocation()">Buttttoon</button>  
+</body>
+
+
+</head>
+</html>
