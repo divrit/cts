@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script> 
+   
+            function add(ar , callback){ 
+                var element = 0;
+                document.write(`The array is : <br> `);
+                for (let index = 0; index < ar.length; index++) {
+                    var element = element + ar[index];
+                    document.write(ar[index]+`<br>`);
+                    
+                }
+                document.write(`The sum is: ${element}.` +"<br>");
+                callback(); 
+             
+            
+            } 
+              
+            function display(){ 
+            document.write("Completed  process of addition"); 
+            } 
+              
+             
+            //add(5,6,display);     
+             var ar =[10,20,30,40,50] ;
+             add(ar,display);
+
+         </script> 
+    </head>
+</html>
