@@ -1,10 +1,9 @@
-package com.cts.config;
-
+package com.example.config;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernatePersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,56 +11,50 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan({"com.cts.config"})
-@PropertySource(value={"classpath:config.properties"})
-public class HibernateConfig {@Autowired
-	private Environment environment;
+@ComponentScan(basePackages="com.example")
+@PropertySource(value="classpath:application.properties")
+public class HibernateConfig {
 	
+	@Autowired
+    Environment environment;
+ 
+    //--------------------
+    private final String PROPERTY_DRIVER = "driver";
+	private final String PROPERTY_URL = "url";
+	private final String PROPERTY_USERNAME = "user";
+	private final String PROPERTY_PASSWORD = "password";
+	private final String PROPERTY_SHOW_SQL = "hibernate.show_sql";
+	private final String PROPERTY_DIALECT = "hibernate.dialect";
+
 	@Bean
-	public LocalSessionFactoryBean sessionFactory() {
-		
-		LocalSessionFactoryBean sessionFactoryBean =
-				new LocalSessionFactoryBean();
-		sessionFactoryBean.setDataSource(dataSource());
-		sessionFactoryBean.setPackagesToScan(new String[]{"com.cts.model"});
-		sessionFactoryBean.setHibernateProperties(hibernateProperties());
-		
-		return sessionFactoryBean;
+	LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean lfb = new LocalContainerEntityManagerFactoryBean();
+		lfb.setDataSource(dataSource());
+		lfb.setPersistenceProviderClass(HibernatePersistence.class);
+		lfb.setPackagesToScan("com.example.model");
+		lfb.setJpaProperties(hibernateProps());
+		return lfb;
 	}
-	
+
 	@Bean
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource =
-				new DriverManagerDataSource();
-		dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driverClassName"));
-		dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
-		dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
-		dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
-		
-		return dataSource;
+	DataSource dataSource() {
+		DriverManagerDataSource ds = new DriverManagerDataSource();
+		ds.setUrl(environment.getProperty(PROPERTY_URL));
+		ds.setUsername(environment.getProperty(PROPERTY_USERNAME));
+		ds.setPassword(environment.getProperty(PROPERTY_PASSWORD));
+		ds.setDriverClassName(environment.getProperty(PROPERTY_DRIVER));
+		return ds;
 	}
-	
-	private Properties  hibernateProperties() {
+
+	Properties hibernateProps() {
 		Properties properties = new Properties();
-		properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
-        properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-        properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.format_sql"));
-        return properties; 
+		properties.setProperty(PROPERTY_DIALECT, environment.getProperty(PROPERTY_DIALECT));
+		properties.setProperty(PROPERTY_SHOW_SQL, environment.getProperty(PROPERTY_SHOW_SQL));
+		return properties;
 	}
-	
-	@Bean
-    @Autowired
-    public HibernateTransactionManager transactionManager(SessionFactory s) {
-       HibernateTransactionManager txManager = new HibernateTransactionManager();
-       txManager.setSessionFactory(s);
-       return txManager;
-    }
 }
-
-
